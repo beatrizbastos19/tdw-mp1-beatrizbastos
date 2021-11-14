@@ -46,7 +46,7 @@
     "start": "gatsby develop",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "test": "jest --passWithNoTests"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
