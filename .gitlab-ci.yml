@@ -1,0 +1,43 @@
+image: node:14
+cache:    
+  - key:        
+      files:          
+        - package-lock.json   
+    paths:      
+      - node_modules/
+
+stages:
+  - install
+  - validate
+  - deploy
+
+install:
+  stage: install
+  script:
+    - npm install
+  artifacts:      
+    paths:       
+     - node_modules/
+     
+test:
+  stage: validate
+  script:
+    - npm run test
+
+lint:
+  stage: validate
+  script:
+    - npm run lint
+
+prettier:
+  stage: validate
+  script:
+    - npm run prettier
+
+deploy:
+  stage: deploy
+  script:
+    - npm run build
+    - npx netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "main"
