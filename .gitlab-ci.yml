@@ -1,4 +1,4 @@
-image: node:14
+image: node:lts
 cache:    
   - key:        
       files:          
@@ -10,6 +10,12 @@ stages:
   - install
   - validate
   - deploy
+
+variables:
+  FF_USE_FASTZIP: "true"
+  ARTIFACT_COMPRESSION_LEVEL: fastest
+  CACHE_COMPRESSION_LEVEL: fastest
+  TRANSFER_METER_FREQUENCY: 5s
 
 install:
   stage: install
@@ -37,9 +43,7 @@ prettier:
 deploy:
   stage: deploy
   script:
-    - export CONTENTFUL_SPACE_ID=$CONTENTFUL_SPACE_ID
-    - export CONTENTFUL_ACCESS_TOKEN=$CONTENTFUL_ACCESS_TOKEN
     - npm run build
     - npx netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod
   rules:
-    - if: $CI_COMMIT_REF_NAME == "tdw-mp1-beatrizbastos"
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
