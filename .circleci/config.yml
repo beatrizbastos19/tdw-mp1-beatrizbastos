@@ -3,9 +3,8 @@ version: 2.1
 orbs:
   node: circleci/node@4.7.0
 
-
-
 # Define the jobs we want to run for this project
+
 jobs:
   install:
     docker:
@@ -56,6 +55,7 @@ jobs:
       - run:
           command: npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod
 
+
 # Orchestrate our job run sequence
 workflows:
   build_and_test:
@@ -75,17 +75,10 @@ workflows:
             - prettier
             - jest
             - lint
-user: jpmca@ua.pt
-pass: 6Bv*J3@Dym3oNL%FkBg
-
-  ----
-
-deploy:
-  version: 2
-  commit:
-    jobs:
-      - test
-      - deploy
+          filters:
+            branches:
+              only:
+                - master
   nightly:
     triggers:
       - schedule:
@@ -93,7 +86,10 @@ deploy:
           filters:
             branches:
               only:
-                - main
-                - beta
+                  - master
     jobs:
-      - coverage
+      - install
+      - prettier
+      - lint
+      - jest
+      - deploy
