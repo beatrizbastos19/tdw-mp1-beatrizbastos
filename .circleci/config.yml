@@ -79,7 +79,7 @@ workflows:
             branches:
               only:
                 - master
-  nightly:
+  night pipeline:
     triggers:
       - schedule:
           cron: "0 0 * * *"
