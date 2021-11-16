@@ -78,7 +78,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
   night pipeline:
     triggers:
       - schedule:
@@ -86,7 +86,7 @@ workflows:
           filters:
             branches:
               only:
-                  - master
+                  - main
     jobs:
       - install
       - prettier
