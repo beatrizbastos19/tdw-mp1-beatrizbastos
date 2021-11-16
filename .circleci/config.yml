@@ -1,0 +1,99 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@4.7.0
+
+
+
+# Define the jobs we want to run for this project
+jobs:
+  install:
+    docker:
+      - image: cimg/node:17.1.0
+
+    steps:
+      - checkout
+      - run: npm install
+  prettier:
+    docker:
+      - image: cimg/node:17.1.0
+
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          command: npm run prettier
+
+  jest:
+    docker:
+      - image: cimg/node:17.1.0
+
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          command: npm run test
+
+  lint:
+    docker:
+      - image: cimg/node:17.1.0
+
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          command: npm run lint
+
+  deploy:
+    docker:
+      - image: cimg/node:17.1.0
+
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          command: npm run build 
+      - run:
+          command: npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod
+
+# Orchestrate our job run sequence
+workflows:
+  build_and_test:
+    jobs:
+      - install
+      - prettier:
+          requires:
+            - install
+      - jest:
+          requires:
+            - install
+      - lint:
+          requires:
+            - install
+      - deploy:
+          requires:
+            - prettier
+            - jest
+            - lint
+user: jpmca@ua.pt
+pass: 6Bv*J3@Dym3oNL%FkBg
+
+  ----
+
+deploy:
+  version: 2
+  commit:
+    jobs:
+      - test
+      - deploy
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - main
+                - beta
+    jobs:
+      - coverage
